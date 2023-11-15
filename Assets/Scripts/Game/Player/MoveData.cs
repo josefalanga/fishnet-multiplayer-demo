@@ -4,12 +4,12 @@ namespace Game.Player
 {
     public struct MoveData : IReplicateData
     {
-        public bool Jump;
+        public bool Hit;
         public float Horizontal;
         public float Vertical;
-        public MoveData(bool jump, float horizontal, float vertical)
+        public MoveData(bool hit, float horizontal, float vertical)
         {
-            Jump = jump;
+            Hit = hit;
             Horizontal = horizontal;
             Vertical = vertical;
             _tick = 0;

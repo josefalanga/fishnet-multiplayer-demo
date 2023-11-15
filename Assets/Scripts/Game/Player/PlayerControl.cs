@@ -10,14 +10,20 @@ namespace Game.Player
     {
         [SerializeField]
         private float _moveRate = 15f;
-        private Rigidbody _rigidbody;
         private float _nextHitTime;
         private bool _hit;
+        
+        [SerializeField]
+        private GameObject[] colorElements;
+
+        private Rigidbody _rigidbody;
+        private Animator _animator;
+        private static readonly int Hit = Animator.StringToHash("Hit");
 
         private void Awake()
         {
-
             _rigidbody = GetComponent<Rigidbody>();
+            _animator = GetComponentInChildren<Animator>();
             InstanceFinder.TimeManager.OnTick += TimeManager_OnTick;
             InstanceFinder.TimeManager.OnPostTick += TimeManager_OnPostTick;
         }
@@ -34,6 +40,7 @@ namespace Game.Player
         public override void OnStartClient()
         {
             PredictionManager.OnPreReplicateReplay += PredictionManager_OnPreReplicateReplay;
+            Recolor();
         }
         public override void OnStopClient()
         {            
@@ -44,7 +51,7 @@ namespace Game.Player
         {
             if (IsOwner && Input.GetKeyDown(KeyCode.Space) && Time.time > _nextHitTime)
             {
-                _nextHitTime = Time.time + 1f;
+                _nextHitTime = Time.time + .3f;
                 _hit = true;
             }
         }
@@ -124,6 +131,9 @@ namespace Game.Player
         [Replicate]
         private void Move(MoveData md, bool asServer, Channel channel = Channel.Unreliable, bool replaying = false)
         {
+            if (md.Hit)
+                _animator.SetTrigger(Hit);
+            
             var movement = new Vector2(md.Horizontal, md.Vertical);
             if (movement.magnitude == 0)
                 return;
@@ -134,7 +144,6 @@ namespace Game.Player
             var deltaRotation = Quaternion.Euler(rbTransform.up * (movement.x * 5f));
             var rotation = rbTransform.rotation * deltaRotation;
             _rigidbody.Move(position, rotation);
-            
         }
 
         [Reconcile]
@@ -144,6 +153,12 @@ namespace Game.Player
             transform.rotation = rd.Rotation;
             _rigidbody.velocity = rd.Velocity;
             _rigidbody.angularVelocity = rd.AngularVelocity;
+        }
+
+        private void Recolor()
+        {
+            for (var index = 0; index < colorElements.Length; index++)
+                colorElements[index].GetComponent<Renderer>().material.color = Extensions.Color.Random(ObjectId);
         }
     }
 }
