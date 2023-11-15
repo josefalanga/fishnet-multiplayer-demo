@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/FishNet/Demos/Prediction V1/CharacterController/CharacterControllerPrediction.unity
-    guid: ec1a6e85f57626a4cbacaf306766bdfd
+    path: Assets/Scenes/Main.unity
+    guid: 7b27824e31c4cf54492f3140c1877c3c
   m_configObjects: {}
