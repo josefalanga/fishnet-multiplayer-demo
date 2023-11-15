@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 303449597948771939}
   - component: {fileID: 303449597948771940}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 201277549}
   - component: {fileID: 1565754455094126377}
   m_Layer: 0
-  m_Name: RigidbodyPrediction 1
+  m_Name: RigidbodyPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,15 +150,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 303449598114786579}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e123f937d4b4f94c9cb6cc03944f786, type: 3}
+  m_Script: {fileID: 11500000, guid: eb2a560636330ce4189c3247a743f8d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 201277550}
   _networkObjectCache: {fileID: 201277550}
-  _jumpForce: 15
   _moveRate: 15
-  BulletPrefab: {fileID: 0}
 --- !u!114 &201277550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,7 +190,7 @@ MonoBehaviour:
   <SpawnableCollectionId>k__BackingField: 0
   _scenePathHash: 0
   <SceneId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 17741771061768272519
+  <AssetPathHash>k__BackingField: 340155993976531423
 --- !u!54 &201277549
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -218,7 +216,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 1
 --- !u!114 &1565754455094126377
 MonoBehaviour:
@@ -274,7 +272,7 @@ GameObject:
   - component: {fileID: 303449598207636362}
   - component: {fileID: 303449598207636363}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -440,7 +438,7 @@ GameObject:
   - component: {fileID: 303449599178274088}
   - component: {fileID: 303449599178274089}
   m_Layer: 0
-  m_Name: Sphere (1)
+  m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
