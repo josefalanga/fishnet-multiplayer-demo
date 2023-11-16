@@ -7,6 +7,7 @@ namespace Game.Player
         public bool Hit;
         public float Horizontal;
         public float Vertical;
+        
         public MoveData(bool hit, float horizontal, float vertical)
         {
             Hit = hit;

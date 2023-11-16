@@ -9,25 +9,31 @@ namespace Game.Player
     public class PlayerControl : NetworkBehaviour
     {
         [SerializeField]
-        private float _moveRate = 15f;
+        [Range(0.1f,1f)]
+        private float _moveRate = 0.2f;
         private float _nextHitTime;
         private bool _hit;
         
         [SerializeField]
         private GameObject[] colorElements;
+        
+        [SerializeField]
+        private NetworkObject tombstonePrefab;
 
         private Rigidbody _rigidbody;
         private Animator _animator;
         private static readonly int Hit = Animator.StringToHash("Hit");
+        public int HitPoints = 30;
 
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
             _animator = GetComponentInChildren<Animator>();
+            GetComponentInChildren<StickBox>().PlayerHit += OnPlayerHit;
             InstanceFinder.TimeManager.OnTick += TimeManager_OnTick;
             InstanceFinder.TimeManager.OnPostTick += TimeManager_OnPostTick;
         }
-  
+
         private void OnDestroy()
         {
             if (InstanceFinder.TimeManager != null)
@@ -117,6 +123,7 @@ namespace Game.Player
                 return;
 
             md = new MoveData(_hit, horizontal, vertical);
+            
             _hit = false;
         }
 
@@ -139,8 +146,10 @@ namespace Game.Player
                 return;
             
             _rigidbody.velocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+            
             var rbTransform = _rigidbody.transform;
-            var position = rbTransform.position + rbTransform.forward * (movement.y * 0.2f);
+            var position = rbTransform.position + rbTransform.forward * (movement.y * _moveRate);
             var deltaRotation = Quaternion.Euler(rbTransform.up * (movement.x * 5f));
             var rotation = rbTransform.rotation * deltaRotation;
             _rigidbody.Move(position, rotation);
@@ -158,7 +167,35 @@ namespace Game.Player
         private void Recolor()
         {
             for (var index = 0; index < colorElements.Length; index++)
-                colorElements[index].GetComponent<Renderer>().material.color = Extensions.Color.Random(ObjectId);
+                colorElements[index].GetComponent<Renderer>().material.color = Extensions.Color.Random(OwnerId);
+        }
+        
+        private void OnPlayerHit(int playerId)
+        {
+            if (IsOwner)
+                MatchManager.Instance.Hit(OwnerId, playerId);
+        }
+
+        public void TakeDamage(int damage, Vector3 from)
+        {
+            if (IsServer)
+            {
+                HitPoints -= damage;
+                if (HitPoints <= 0)
+                    Die();
+                else
+                    _rigidbody.AddExplosionForce(300f * damage, from, damage);
+            }
+        }
+
+        private void Die()
+        {
+            if (IsServer)
+            {
+                NetworkObject tombstone = Instantiate(tombstonePrefab, transform.position, Quaternion.identity);
+                InstanceFinder.ServerManager.Spawn(tombstone);
+                MatchManager.Instance.Kill(NetworkObject);
+            }
         }
     }
 }
