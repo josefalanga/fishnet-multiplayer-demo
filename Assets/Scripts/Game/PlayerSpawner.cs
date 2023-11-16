@@ -10,7 +10,8 @@ using UnityEngine;
 namespace Game
 {
     //mostly copied from FishNet.Component.Spawning.PlayerSpawner
-    //only to expose the actual spawning method to allow respawning
+    //exposes the actual spawning method to allow respawning
+    //also handles a random list of player avatars
     public class PlayerSpawner : MonoBehaviour
     {
         public event Action<NetworkObject> OnSpawned;

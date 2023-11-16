@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace Game.Player
 {
+    //main player controller, handles input, animations, hit detection
     public class PlayerControl : NetworkBehaviour
     {
         [SerializeField]
         [Range(0.1f,1f)]
         private float _moveRate = 0.2f;
-        private bool _hit;
         
         [SerializeField]
         private GameObject[] colorElements;
@@ -45,6 +45,7 @@ namespace Game.Player
         public override void OnStartClient()
         {
             PredictionManager.OnPreReplicateReplay += PredictionManager_OnPreReplicateReplay;
+            //once we have and owner registered, we recolor accordingly
             Recolor();
         }
         public override void OnStopClient()
@@ -56,19 +57,21 @@ namespace Game.Player
         {
             if (IsOwner && Input.GetKeyDown(KeyCode.Space))
             {
+                //perform the animation locally
                 _animator.SetTrigger(hitTrigger);
-                Hit();
+                //notify the hit to others
+                ServerHit();
             }
         }
         
         [ServerRpc]
-        private void Hit()
+        private void ServerHit()
         {
-            AnimateHit();
+            BroadcastHit();
         }
 
         [ObserversRpc(ExcludeOwner = true)]
-        private void AnimateHit()
+        private void BroadcastHit()
         {
             _animator.SetTrigger(hitTrigger);
         }
@@ -133,7 +136,7 @@ namespace Game.Player
             if (horizontal == 0f && vertical == 0f)
                 return;
 
-            md = new MoveData(_hit, horizontal, vertical);
+            md = new MoveData(horizontal, vertical);
         }
 
         /// <summary>
@@ -151,7 +154,6 @@ namespace Game.Player
             if (movement.magnitude == 0)
                 return;
             
-            _rigidbody.velocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
             
             var rbTransform = _rigidbody.transform;

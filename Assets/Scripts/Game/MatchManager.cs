@@ -14,7 +14,7 @@ namespace Game
         //Singleton access
         public static MatchManager Instance { get; private set; }
 
-        private Dictionary<int, float> nextHitTime = new Dictionary<int, float>();
+        private readonly Dictionary<int, float> _nextHitTime = new();
         
         private void Awake()
         {
@@ -36,7 +36,7 @@ namespace Game
                 return;
             
             //don't allow too fast hits
-            if (nextHitTime.TryGetValue(source, out var time))
+            if (_nextHitTime.TryGetValue(source, out var time))
             {
                 if (Time.time < time)
                 {
@@ -44,7 +44,7 @@ namespace Game
                 }
             }
             
-            nextHitTime[source] = Time.time + .3f;
+            _nextHitTime[source] = Time.time + .3f;
             
             targetPlayer.TakeDamage(10, sourcePlayer.transform.position);
         }
