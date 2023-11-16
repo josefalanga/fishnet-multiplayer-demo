@@ -11,7 +11,6 @@ namespace Game.Player
         [SerializeField]
         [Range(0.1f,1f)]
         private float _moveRate = 0.2f;
-        private float _nextHitTime;
         private bool _hit;
         
         [SerializeField]
@@ -55,7 +54,7 @@ namespace Game.Player
 
         private void Update()
         {
-            if (IsOwner && Input.GetKeyDown(KeyCode.Space) && Time.time > _nextHitTime)
+            if (IsOwner && Input.GetKeyDown(KeyCode.Space))
             {
                 _animator.SetTrigger(hitTrigger);
                 Hit();
@@ -65,11 +64,7 @@ namespace Game.Player
         [ServerRpc]
         private void Hit()
         {
-            if (Time.time > _nextHitTime)
-            {
-                _nextHitTime = Time.time + .3f;
-                AnimateHit();
-            }
+            AnimateHit();
         }
 
         [ObserversRpc(ExcludeOwner = true)]

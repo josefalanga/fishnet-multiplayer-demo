@@ -1401,7 +1401,6 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 1879002307}
   _networkObjectCache: {fileID: 1879002307}
-  _playerPrefab: {fileID: 1028796175476010356, guid: 54f1ebc4a35124943a1bc7e124c17863, type: 3}
 --- !u!4 &1879002309
 Transform:
   m_ObjectHideFlags: 0
@@ -2066,7 +2065,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768b1725990d4c2d95392c30308f2872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 7254844832171838320, guid: 54f1ebc4a35124943a1bc7e124c17863, type: 3}
+  _playerPrefabs:
+  - {fileID: 395421889387087593, guid: fda8163e56eee3849a9b9ac970ea449f, type: 3}
+  - {fileID: 6280598294150295307, guid: 0da12e68f82560a448c3174760be2011, type: 3}
+  - {fileID: 6562934963588048991, guid: 54f1ebc4a35124943a1bc7e124c17863, type: 3}
   _addToDefaultScene: 1
   Spawns:
   - {fileID: 1141271000}

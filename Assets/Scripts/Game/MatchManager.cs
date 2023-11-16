@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using FishNet;
 using FishNet.Object;
@@ -7,32 +8,17 @@ using UnityEngine;
 
 namespace Game
 {
+    //This class exists to validate player's interaction, for now handles Hits, Deaths and Respawns
     public class MatchManager : NetworkBehaviour
     {
-        /// <summary>
-        /// Prefab to spawn for the player.
-        /// </summary>
-        [Tooltip("Prefab to spawn for the player.")]
-        [SerializeField]
-        private NetworkObject _playerPrefab;
-        
+        //Singleton access
         public static MatchManager Instance { get; private set; }
+
+        private Dictionary<int, float> nextHitTime = new Dictionary<int, float>();
         
         private void Awake()
         {
             Instance = this;
-            InstanceFinder.TimeManager.OnTick += TimeManager_OnTick;
-        }
-
-        private void OnDestroy()
-        {
-            if (InstanceFinder.TimeManager != null) 
-                InstanceFinder.TimeManager.OnTick -= TimeManager_OnTick;
-        }
-
-        private void TimeManager_OnTick()
-        {
-            
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -43,15 +29,23 @@ namespace Game
             var targetPlayer = players.FirstOrDefault(x => x.OwnerId == target);
             
             if (sourcePlayer == null || targetPlayer == null)
-            {
                 return;
+
+            //don't allow hit from too far away
+            if(Vector3.Distance(sourcePlayer.transform.position, targetPlayer.transform.position) > 3)
+                return;
+            
+            //don't allow too fast hits
+            if (nextHitTime.TryGetValue(source, out var time))
+            {
+                if (Time.time < time)
+                {
+                    return;
+                }
             }
             
-            if(Vector3.Distance(sourcePlayer.transform.position, targetPlayer.transform.position) > 2)
-            {
-                return;
-            }
-
+            nextHitTime[source] = Time.time + .3f;
+            
             targetPlayer.TakeDamage(10, sourcePlayer.transform.position);
         }
 
@@ -66,6 +60,7 @@ namespace Game
             var playerControl = FindObjectsOfType<PlayerControl>()
                 .FirstOrDefault(x => x.OwnerId == player.OwnerId);
             
+            //don't kill a player with hitpoints remaining
             if (playerControl == null || playerControl.HitPoints > 0)
                 yield break;
             

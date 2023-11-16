@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Extensions;
 using FishNet;
 using FishNet.Connection;
 using FishNet.Managing;
@@ -7,12 +9,14 @@ using UnityEngine;
 
 namespace Game
 {
+    //mostly copied from FishNet.Component.Spawning.PlayerSpawner
+    //only to expose the actual spawning method to allow respawning
     public class PlayerSpawner : MonoBehaviour
     {
         public event Action<NetworkObject> OnSpawned;
         [Tooltip("Prefab to spawn for the player.")]
         [SerializeField]
-        private NetworkObject _playerPrefab;
+        private List<NetworkObject> _playerPrefabs = new();
         [Tooltip("True to add player to the active scene when no global scenes are specified through the SceneManager.")]
         [SerializeField]
         private bool _addToDefaultScene = true;
@@ -20,6 +24,8 @@ namespace Game
         public Transform[] Spawns = new Transform[0];
         private NetworkManager _networkManager;
         private int _nextSpawn;
+        
+        //Singleton access
         public static PlayerSpawner Instance { get; private set; }
         
         private void Awake()
@@ -34,7 +40,7 @@ namespace Game
         private void OnDestroy()
         {
             if (_networkManager != null)
-                _networkManager.SceneManager.OnClientLoadedStartScenes -= SceneManager_OnClientLoadedStartScenes;
+                _networkManager.SceneManager.OnClientLoadedStartScenes -= Spawn;
         }
         
         private void InitializeOnce()
@@ -46,14 +52,14 @@ namespace Game
                 return;
             }
 
-            _networkManager.SceneManager.OnClientLoadedStartScenes += SceneManager_OnClientLoadedStartScenes;
+            _networkManager.SceneManager.OnClientLoadedStartScenes += Spawn;
         }
         
-        private void SceneManager_OnClientLoadedStartScenes(NetworkConnection conn, bool asServer)
+        public void Spawn(NetworkConnection conn, bool asServer)
         {
             if (!asServer)
                 return;
-            if (_playerPrefab == null)
+            if (_playerPrefabs == null || _playerPrefabs.Count == 0)
             {
                 Debug.LogWarning($"Player prefab is empty and cannot be spawned for connection {conn.ClientId}.");
                 return;
@@ -61,9 +67,9 @@ namespace Game
 
             Vector3 position;
             Quaternion rotation;
-            SetSpawn(_playerPrefab.transform, out position, out rotation);
+            SetSpawn(out position, out rotation);
 
-            NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
+            NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefabs.Random(), position, rotation, true);
             _networkManager.ServerManager.Spawn(nob, conn);
 
             //If there are no global scenes 
@@ -72,20 +78,13 @@ namespace Game
 
             OnSpawned?.Invoke(nob);
         }
-        private void SetSpawn(Transform prefab, out Vector3 pos, out Quaternion rot)
+        private void SetSpawn(out Vector3 pos, out Quaternion rot)
         {
-            if (Spawns.Length == 0)
-            {
-                SetSpawnUsingPrefab(prefab, out pos, out rot);
-                return;
-            }
+           pos = Vector3.zero;
+           rot = Quaternion.identity;
 
             Transform result = Spawns[_nextSpawn];
-            if (result == null)
-            {
-                SetSpawnUsingPrefab(prefab, out pos, out rot);
-            }
-            else
+            if (result != null)
             {
                 pos = result.position;
                 rot = result.rotation;
@@ -94,17 +93,6 @@ namespace Game
             _nextSpawn++;
             if (_nextSpawn >= Spawns.Length)
                 _nextSpawn = 0;
-        }
-        
-        private void SetSpawnUsingPrefab(Transform prefab, out Vector3 pos, out Quaternion rot)
-        {
-            pos = prefab.position;
-            rot = prefab.rotation;
-        }
-
-        public void Spawn(NetworkConnection conn, bool isServer)
-        {
-            SceneManager_OnClientLoadedStartScenes(conn, isServer);
         }
     }
 }
