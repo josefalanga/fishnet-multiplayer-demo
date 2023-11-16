@@ -230,6 +230,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 6273444b68d517449aadb36abebaf561, type: 2}
+  - {fileID: 2100000, guid: 891e646011c549f439ae90847bed722c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -327,8 +328,8 @@ MonoBehaviour:
   Transport: {fileID: 192429405}
   _intermediateLayer: {fileID: 0}
   _latencySimulator:
-    _enabled: 1
-    _simulateHost: 1
+    _enabled: 0
+    _simulateHost: 0
     _latency: 150
     _outOfOrder: 0.1899999976158142
     _packetLoss: 0.16500000655651093
@@ -552,6 +553,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 6273444b68d517449aadb36abebaf561, type: 2}
+  - {fileID: 2100000, guid: 891e646011c549f439ae90847bed722c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -759,6 +761,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 6273444b68d517449aadb36abebaf561, type: 2}
+  - {fileID: 2100000, guid: 891e646011c549f439ae90847bed722c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -974,6 +977,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 0bb31cf72dfcef449a1a4a5aab857f63, type: 2}
+  - {fileID: 2100000, guid: 891e646011c549f439ae90847bed722c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1849,11 +1853,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _autoStartType: 1
-  _stoppedColor: {r: 0.25490198, g: 0.25490198, b: 0.25490198, a: 1}
-  _changingColor: {r: 0.78431374, g: 0.6862745, b: 0, a: 1}
-  _startedColor: {r: 0, g: 0.5882353, b: 0.64705884, a: 1}
+  _stoppedColor:
+    r: 0.25490198
+    g: 0.25490198
+    b: 0.25490198
+    a: 1
+  _changingColor:
+    r: 0.78431374
+    g: 0.6862745
+    b: 0
+    a: 1
+  _startedColor:
+    r: 0
+    g: 0.5882353
+    b: 0.64705884
+    a: 1
   _serverIndicator: {fileID: 3965864432699664111}
   _clientIndicator: {fileID: 1424052073902602981}
+  _networkManager: {fileID: 0}
+  _clientState: 0
+  _serverState: 0
+  _eventSystem: {fileID: 0}
 --- !u!223 &4393252311378272344
 Canvas:
   m_ObjectHideFlags: 0
@@ -2066,7 +2086,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 768b1725990d4c2d95392c30308f2872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 3853251344705875699, guid: 54f1ebc4a35124943a1bc7e124c17863, type: 3}
+  _playerPrefab: {fileID: 7254844832171838320, guid: 54f1ebc4a35124943a1bc7e124c17863, type: 3}
   _addToDefaultScene: 1
   Spawns:
   - {fileID: 1141271000}
