@@ -1,5 +1,5 @@
+using System.Collections;
 using System.Linq;
-using System.Threading.Tasks;
 using FishNet;
 using FishNet.Object;
 using Game.Player;
@@ -58,24 +58,23 @@ namespace Game
         [ServerRpc(RequireOwnership = false)]
         public void Kill(NetworkObject networkObject)
         {
-            Task.Run(() => KillAndRespawn(networkObject));
+            StartCoroutine(KillAndRespawn(networkObject));
         }
 
-        private async Task KillAndRespawn(NetworkObject player)
+        private IEnumerator KillAndRespawn(NetworkObject player)
         {
             var playerControl = FindObjectsOfType<PlayerControl>()
                 .FirstOrDefault(x => x.OwnerId == player.OwnerId);
             
             if (playerControl == null || playerControl.HitPoints > 0)
-                return;
+                yield break;
             
             var conn = player.Owner;
             InstanceFinder.ServerManager.Despawn(player);
 
-            await Task.Delay(2);
+            yield return new WaitForSeconds(2);
 
-            NetworkObject nob = Instantiate(_playerPrefab, Vector3.zero, Quaternion.identity);
-            InstanceFinder.ServerManager.Spawn(nob, conn);
+            PlayerSpawner.Instance.Spawn(conn, IsServer);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Game.Player
 
         private Rigidbody _rigidbody;
         private Animator _animator;
-        private static readonly int Hit = Animator.StringToHash("Hit");
+        private static readonly int hitTrigger = Animator.StringToHash("Hit");
         public int HitPoints = 30;
 
         private void Awake()
@@ -57,9 +57,25 @@ namespace Game.Player
         {
             if (IsOwner && Input.GetKeyDown(KeyCode.Space) && Time.time > _nextHitTime)
             {
-                _nextHitTime = Time.time + .3f;
-                _hit = true;
+                _animator.SetTrigger(hitTrigger);
+                Hit();
             }
+        }
+        
+        [ServerRpc]
+        private void Hit()
+        {
+            if (Time.time > _nextHitTime)
+            {
+                _nextHitTime = Time.time + .3f;
+                AnimateHit();
+            }
+        }
+
+        [ObserversRpc(ExcludeOwner = true)]
+        private void AnimateHit()
+        {
+            _animator.SetTrigger(hitTrigger);
         }
 
         /// <summary>
@@ -119,12 +135,10 @@ namespace Game.Player
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
 
-            if (horizontal == 0f && vertical == 0f && !_hit)
+            if (horizontal == 0f && vertical == 0f)
                 return;
 
             md = new MoveData(_hit, horizontal, vertical);
-            
-            _hit = false;
         }
 
         /// <summary>
@@ -138,9 +152,6 @@ namespace Game.Player
         [Replicate]
         private void Move(MoveData md, bool asServer, Channel channel = Channel.Unreliable, bool replaying = false)
         {
-            if (md.Hit)
-                _animator.SetTrigger(Hit);
-            
             var movement = new Vector2(md.Horizontal, md.Vertical);
             if (movement.magnitude == 0)
                 return;
@@ -184,7 +195,7 @@ namespace Game.Player
                 if (HitPoints <= 0)
                     Die();
                 else
-                    _rigidbody.AddExplosionForce(300f * damage, from, damage);
+                    _rigidbody.AddForce((transform.position - from) * 5f, ForceMode.Impulse);
             }
         }
 
