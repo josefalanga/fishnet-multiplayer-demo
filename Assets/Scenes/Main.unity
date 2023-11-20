@@ -2066,9 +2066,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerPrefabs:
-  - {fileID: 395421889387087593, guid: fda8163e56eee3849a9b9ac970ea449f, type: 3}
-  - {fileID: 6280598294150295307, guid: 0da12e68f82560a448c3174760be2011, type: 3}
-  - {fileID: 6562934963588048991, guid: 54f1ebc4a35124943a1bc7e124c17863, type: 3}
+  - {fileID: 5790324678856956089, guid: fda8163e56eee3849a9b9ac970ea449f, type: 3}
+  - {fileID: 148237668141379931, guid: 0da12e68f82560a448c3174760be2011, type: 3}
+  - {fileID: 1023360634098464271, guid: 54f1ebc4a35124943a1bc7e124c17863, type: 3}
   _addToDefaultScene: 1
   Spawns:
   - {fileID: 1141271000}
